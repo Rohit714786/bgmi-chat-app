@@ -1,3 +1,4 @@
+//Register file css
 .formContainer{
   background-color: #a7bcff;
   height: 100vh;
@@ -45,6 +46,18 @@
         font-weight: bold;
         border: none;
         cursor: pointer;
+      }
+      label{
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        color: #8da4f1;
+        font-size: 12px;
+        cursor: pointer;
+      }
+      img{
+        height: 8vh;
+        width: 8vh;
       }
     }
     p{
