@@ -1,18 +1,22 @@
-import { signOut } from "firebase/auth";
-import React from "react";
-import { auth } from "../firebase";
+import React, { useContext } from "react";
+import { AuthContext } from "../context/AuthContext";
 
 const Navbar = () => {
+  const { currentUser } = useContext(AuthContext);
+
+  // Check if currentUser exists and has a photoURL property
+  const userPhoto = currentUser?.photoURL || "";
+
   return (
-    <div className="navbar">
-      <span className="logo">Bgmi Chat</span>
+    <div className="Navbar">
+      <div className="logo">
+        <span className="logo1">
+          Bgmi<span className="logo2"> chat</span>
+        </span>
+      </div>
       <div className="user">
-        <img
-          src="https://tse1.mm.bing.net/th?id=OIP.awAiMS1BCAQ2xS2lcdXGlwHaHH&pid=Api&rs=1&c=1&qlt=95&w=114&h=109"
-          alt=""
-        />
-        <span>Rohit</span>
-        <button onClick={() => signOut(auth)}>logout</button>
+        {/* Display the user's profile image if available */}
+        {userPhoto && <img src={userPhoto} alt="User" />}
       </div>
     </div>
   );

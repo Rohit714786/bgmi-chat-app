@@ -1,34 +1,37 @@
-import React from 'react'
+import React, { useContext, useEffect, useState } from "react";
+import { AuthContext } from "../context/AuthContext";
+import { doc, onSnapshot } from "firebase/firestore";
+import { db } from "../firebase";
 
 const Chats = () => {
-  return(
+  const [chats, setChats] = useState([]);
+  const { currentUser } = useContext(AuthContext);
 
-    <div>
-      <div className='userChat'>
-        <img src='https://tse3.mm.bing.net/th?id=OIP.mvPLLRgYSrxg5XRLE9sUrAHaL8&pid=Api&P=0&h=180' alt=''/>
-        <div className="userChatInfo">
-          <span>Jane</span>
-          <p> Hello</p>
+  useEffect(() => {
+    const getChats = () => {
+      const unsub = onSnapshot(doc(db, "userChats", currentUser.uid), (doc) => {
+        setChats(doc.data());
+      });
+      return () => {
+        unsub();
+      };
+    };
+    currentUser.uid && getChats();
+  }, [currentUser.uid]);
+
+  return (
+    <div className="chat">
+      {Object.entries(chats)?.map((chat) => (
+        <div className="userChat" key={chat[0]}>
+          <img src={chat[1].userInfo.photoURL} alt="" />
+          <div className="userChatInfo">
+            <span>{chat[1].userInfo.displayName}</span>
+            <p> {chat[1].userInfo.lastMessage?.text}</p>
+          </div>
         </div>
-      </div>
+      ))}
     </div>
-    
-    
-    
-    
-    
-    
-
-  )
-}
-   
-   
-   
-   
-   
-   
-   
-
-
+  );
+};
 
 export default Chats;

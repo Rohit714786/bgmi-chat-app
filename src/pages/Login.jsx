@@ -1,11 +1,15 @@
 import React, { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../firebase";
+import { Link, useNavigate } from "react-router-dom";
+
+//import { RiUserAddLine } from 'react-icons/ri';
 
 const Login = () => {
   const [err, setErr] = useState(false);
   const navigate = useNavigate();
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     const email = e.target[0].value;
@@ -14,26 +18,33 @@ const Login = () => {
     try {
       await signInWithEmailAndPassword(auth, email, password);
       navigate("/");
-    } catch (error) {
+    } catch (err) {
       setErr(true);
     }
   };
+
   return (
     <div className="formContainer">
       <div className="formWrapper">
-        <span className="logo">BGMI Chat</span>
-        <span className="title">Login</span>
+        <div className="logo">
+          <span className="logo1">
+            Bgmi<span className="logo2"> chat</span>
+          </span>
+        </div>
+        <span className="title">Log in</span>
         <form onSubmit={handleSubmit}>
-          <input type="email" placeholder="email" required />
-          <input type="password" placeholder="password" required />
-          <button>Login</button>
-          {err && <span>Something went wrong </span>}
+          <input type="Email" placeholder="Email"></input>
+          <input type="password" placeholder="password"></input>
+          <button>Sign in</button>
+
+          {err && <span className="error">Something went wrong</span>}
         </form>
         <p>
-          You Don't have an account? <Link to="/register">Register</Link>
+          You don't have an account ? <Link to="/register"> Register </Link>
         </p>
       </div>
     </div>
   );
 };
+
 export default Login;

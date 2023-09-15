@@ -1,19 +1,22 @@
-import Register from "./pages/Register";
-import Login from "./pages/Login";
-import Home from "./pages/Home";
-import "./style.scss";
-import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import { useContext } from "react";
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import { AuthContext } from "./context/AuthContext";
+import { Home } from "./pages/Home";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
+import "./style.scss";
 
 function App() {
   const { currentUser } = useContext(AuthContext);
+
   const ProtectedRoute = ({ children }) => {
     if (!currentUser) {
       return <Navigate to="/login" />;
     }
+
     return children;
   };
+
   return (
     <BrowserRouter>
       <Routes>
@@ -25,12 +28,16 @@ function App() {
                 <Home />
               </ProtectedRoute>
             }
-          ></Route>
-          <Route path="login" element={<Login />}></Route>
-          <Route path="register" element={<Register />}></Route>
+          />
+          <Route path="login" element={<Login />} />
+          <Route path="register" element={<Register />} />
+
+          {/* Add a catch-all route for 404 handling if needed */}
+          {/* <Route path="*" element={<NotFound />} /> */}
         </Route>
       </Routes>
     </BrowserRouter>
   );
 }
+
 export default App;
