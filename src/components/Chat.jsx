@@ -35,11 +35,44 @@ const Chat = () => {
             alt=""
           ></img>
           {isLarge && (
-            <div className="enlarged-image-container">
-              <img src={data.user?.photoURL} alt="" />
+            <div
+              className="enlarged-image-container"
+              style={{
+                position: "fixed",
+                top: "0",
+                left: "0",
+                width: "100%",
+                height: "100%",
+                background: "rgba(0, 0, 0, 0.8)", // Semi-transparent black background
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                zIndex: "1000", // Ensure it's on top of other elements
+              }}
+            >
+              <img
+                src={data.user?.photoURL}
+                alt=""
+                style={{
+                  maxWidth: "90%", // Adjust the maximum width as needed
+                  maxHeight: "90%", // Adjust the maximum height as needed
+                }}
+              />
 
-              <button className="close-button" onClick={closeImage}>
-                Close
+              <button
+                className="close-button"
+                onClick={closeImage}
+                style={{
+                  position: "absolute",
+                  top: "20px",
+                  right: "20px",
+                  fontSize: "24px",
+                  color: "white",
+                  cursor: "pointer",
+                  zIndex: "1001", // Ensure it's above the background
+                }}
+              >
+                &#x2716; {/* Unicode "x" character */}
               </button>
             </div>
           )}

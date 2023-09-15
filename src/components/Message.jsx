@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useRef } from "react";
 import { AuthContext } from "../context/AuthContext";
 import { ChatContext } from "../context/ChatContext";
+import { formatDistanceToNow } from "date-fns";
 
 const Message = ({ message }) => {
   const { currentUser } = useContext(AuthContext);
@@ -30,7 +31,9 @@ const Message = ({ message }) => {
       <div className="messageContent">
         <p>{message.text}</p>
         {message.img && <img src={message.img} alt="" />}
-        <span className="time">just now</span>
+        <span className="time">
+          {formatDistanceToNow(message.date.toDate(), { addSuffix: true })}
+        </span>
       </div>
     </div>
   );
