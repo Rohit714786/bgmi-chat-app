@@ -24,17 +24,22 @@ const Chat = () => {
 
   const { data } = useContext(ChatContext);
 
+  const hasChat = data?.chatId && data.chatId !== "null" && data?.user?.uid;
+
   return (
     <div className="chat">
       <div className="navbarChat">
         <div className="profile">
           <img
             className="userimg"
-            src={data.user?.photoURL}
-            onClick={larger}
+            src={
+              data.user?.photoURL ||
+              "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Ccircle fill='%232E2E2E' cx='20' cy='20' r='20'/%3E%3Ctext x='20' y='26' fill='%23ffc500' text-anchor='middle' font-size='18' font-family='sans-serif'%3E💬%3C/text%3E%3C/svg%3E"
+            }
+            onClick={hasChat ? larger : undefined}
             alt=""
-          ></img>
-          {isLarge && (
+          />
+          {isLarge && data.user?.photoURL && (
             <div
               className="enlarged-image-container"
               style={{
@@ -76,7 +81,9 @@ const Chat = () => {
               </button>
             </div>
           )}
-          <span className="name">{data.user?.displayName}</span>
+          <span className="name">
+            {hasChat ? data.user?.displayName : "BGMI Chat"}
+          </span>
         </div>
 
         <div className="buttons">
@@ -187,8 +194,18 @@ const Chat = () => {
           </button>
         </div>
       </div>
-      <Messages />
-      <Input />
+      {hasChat ? (
+        <>
+          <Messages />
+          <Input />
+        </>
+      ) : (
+        <div className="chat-placeholder">
+          <div className="chat-placeholder-icon">💬</div>
+          <p>Choose a conversation</p>
+          <span>Search for a user in the sidebar to start chatting</span>
+        </div>
+      )}
     </div>
   );
 };

@@ -12,6 +12,7 @@ import {
 } from "firebase/firestore";
 import { db } from "../firebase";
 import { AuthContext } from "../context/AuthContext";
+import { ChatContext } from "../context/ChatContext";
 import { useContext } from "react";
 
 const Search = () => {
@@ -20,6 +21,7 @@ const Search = () => {
   const [error, setError] = useState(null);
 
   const { currentUser } = useContext(AuthContext);
+  const { dispatch } = useContext(ChatContext);
 
   const handleSearch = async () => {
     if (username.trim() === "") {
@@ -55,6 +57,7 @@ const Search = () => {
   };
 
   const handleSelect = async () => {
+    if (!user?.uid) return;
     const combinedId =
       currentUser.uid > user.uid
         ? currentUser.uid + user.uid
@@ -81,9 +84,14 @@ const Search = () => {
           [combinedId + ".date"]: serverTimestamp(),
         });
       }
-    } catch (err) {}
+      dispatch({ type: "CHANGE_USER", payload: user });
+    } catch (err) {
+      setError("Could not start chat. Please try again.");
+      return;
+    }
     setUser(null);
     setUsername("");
+    setError(null);
   };
 
   return (

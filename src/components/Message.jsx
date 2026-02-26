@@ -23,7 +23,7 @@ const Message = ({ message }) => {
           src={
             message.senderId === currentUser.uid
               ? currentUser.photoURL
-              : data.user.photoURL
+              : data?.user?.photoURL
           }
           alt=""
         />
@@ -32,7 +32,10 @@ const Message = ({ message }) => {
         <p>{message.text}</p>
         {message.img && <img src={message.img} alt="" />}
         <span className="time">
-          {formatDistanceToNow(message.date.toDate(), { addSuffix: true })}
+          {formatDistanceToNow(
+            message.date?.toDate?.() ?? new Date(),
+            { addSuffix: true }
+          )}
         </span>
       </div>
     </div>

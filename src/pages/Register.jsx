@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { auth, db, storage } from "../firebase";
 
@@ -6,20 +6,51 @@ import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import { doc, setDoc } from "firebase/firestore";
 
 import { RiUserAddLine } from "react-icons/ri";
-import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
 const Register = () => {
-  function refreshPage() {}
-
   const [err, setErr] = useState(false);
+  const [errMessage, setErrMessage] = useState("");
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     const file = e.target.userImage.files[0];
-    const displayName = e.target.displayName.value;
-    const email = e.target.email.value;
+    const displayName = (e.target.displayName.value || "").trim();
+    const email = (e.target.email.value || "").trim();
     const password = e.target.password.value;
+
+    setErr(false);
+    setErrMessage("");
+
+    if (!displayName) {
+      setErr(true);
+      setErrMessage("Name is required.");
+      return;
+    }
+    if (!email) {
+      setErr(true);
+      setErrMessage("Email is required.");
+      return;
+    }
+    if (!password) {
+      setErr(true);
+      setErrMessage("Password is required.");
+      return;
+    }
+    if (password.length < 6) {
+      setErr(true);
+      setErrMessage("Password must be at least 6 characters.");
+      return;
+    }
+    if (!file) {
+      setErr(true);
+      setErrMessage("Please select a profile image.");
+      return;
+    }
+
+    setLoading(true);
 
     try {
       const res = await createUserWithEmailAndPassword(auth, email, password);
@@ -27,34 +58,53 @@ const Register = () => {
       const storageRef = ref(storage, `${displayName}${res.user.uid}`);
 
       const uploadTask = uploadBytesResumable(storageRef, file);
+
       uploadTask.on(
+        "state_changed",
+        () => {},
         (error) => {
           setErr(true);
+          setErrMessage("Upload failed. Please try again.");
+          setLoading(false);
         },
         () => {
           getDownloadURL(uploadTask.snapshot.ref).then(async (downloadURL) => {
-            await updateProfile(res.user, {
-              photoURL: downloadURL,
-              displayName,
-            });
+            try {
+              await updateProfile(res.user, {
+                photoURL: downloadURL,
+                displayName,
+              });
 
-            await setDoc(doc(db, "users", res.user.uid), {
-              uid: res.user.uid,
-              photoURL: downloadURL,
-              displayName,
-              email,
-            });
+              await setDoc(doc(db, "users", res.user.uid), {
+                uid: res.user.uid,
+                photoURL: downloadURL,
+                displayName,
+                email,
+              });
 
-            await setDoc(doc(db, "userChats", res.user.uid), {});
-            navigate("/");
+              await setDoc(doc(db, "userChats", res.user.uid), {});
+              navigate("/");
+            } catch (e) {
+              setErr(true);
+              setErrMessage("Something went wrong. Please try again.");
+            } finally {
+              setLoading(false);
+            }
           });
         }
       );
-
-      alert("Registered successfully!");
-    } catch (err) {
+    } catch (e) {
       setErr(true);
-      console.error(err); // Log the error for debugging
+      if (e.code === "auth/email-already-in-use") {
+        setErrMessage("This email is already registered.");
+      } else if (e.code === "auth/weak-password") {
+        setErrMessage("Password is too weak.");
+      } else if (e.code === "auth/invalid-email") {
+        setErrMessage("Invalid email address.");
+      } else {
+        setErrMessage("Something went wrong. Please try again.");
+      }
+      setLoading(false);
     }
   };
 
@@ -72,19 +122,22 @@ const Register = () => {
             type="file"
             name="userImage"
             id="file"
+            accept="image/*"
             style={{ display: "none" }}
           />
           <label htmlFor="file">
             <RiUserAddLine />
           </label>
-          <input type="text" name="displayName" placeholder="Name" />
-          <input type="email" name="email" placeholder="Email" />
-          <input type="password" name="password" placeholder="Password" />
-          <button onClick={refreshPage}>Sign up</button>
-          {err && <span className="error">Something went wrong</span>}
+          <input type="text" name="displayName" placeholder="Name" disabled={loading} />
+          <input type="email" name="email" placeholder="Email" disabled={loading} />
+          <input type="password" name="password" placeholder="Password" disabled={loading} />
+          <button type="submit" disabled={loading}>
+            {loading ? "Creating account…" : "Sign up"}
+          </button>
+          {err && <span className="error">{errMessage || "Something went wrong"}</span>}
         </form>
         <p>
-          Already have an account ?<Link to="/Login"> Login </Link>
+          Already have an account ? <Link to="/login">Login</Link>
         </p>
       </div>
     </div>

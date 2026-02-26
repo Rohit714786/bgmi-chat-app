@@ -6,6 +6,16 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import "./style.scss";
 
+function NotFound() {
+  return (
+    <div className="formContainer" style={{ flexDirection: "column", gap: "1rem" }}>
+      <h1 style={{ color: "#ffc500" }}>404</h1>
+      <p>Page not found.</p>
+      <a href="/">Go home</a>
+    </div>
+  );
+}
+
 function App() {
   const { currentUser } = useContext(AuthContext);
 
@@ -31,9 +41,7 @@ function App() {
           />
           <Route path="login" element={<Login />} />
           <Route path="register" element={<Register />} />
-
-          {/* Add a catch-all route for 404 handling if needed */}
-          {/* <Route path="*" element={<NotFound />} /> */}
+          <Route path="*" element={<NotFound />} />
         </Route>
       </Routes>
     </BrowserRouter>
