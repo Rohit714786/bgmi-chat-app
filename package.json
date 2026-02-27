@@ -1,1 +1,11 @@
-{\n  "name": "bgmi-chat-app",\n  "version": "1.0.0",\n  "description": "A chat application using BGMI API",\n  "main": "index.js",\n  "homepage": "https://rohit714786.github.io/bgmi-chat-app",\n  "scripts": {\n    "start": "node index.js"\n  },\n  "author": "Rohit714786",\n  "license": "ISC"\n}
+{"name": "bgmi-chat-app",
+  "version": "1.0.0",
+  "description": "A chat application",
+  "main": "index.js",
+  "homepage": "https://rohit714786.github.io/bgmi-chat-app",
+  "scripts": {
+    "test": "echo 'Error: no test specified' && exit 1"
+  },
+  "author": "Rohit714786",
+  "license": "ISC"
+}
